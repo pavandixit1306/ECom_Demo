@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-Ecom_Demo-09625f59-dd0b-448e-9257-7e53d2b0cb15</UserSecretsId>
+    <RootNamespace>Ecom_Demo</RootNamespace>
+    <!-- The SDK globs **/*.cs recursively, which would pull the xUnit test
+         project (a nested folder) into this web project's compile items.
+         Exclude it so the main app doesn't try to compile test code. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);Ecom_Demo.Tests\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- FIX: Identity.UI was pinned to 7.0.20 in a net8.0 project - mismatched
+         major version, can trigger a NuGet downgrade warning/restore failure
+         on a clean machine (e.g. a fresh Azure/CI build agent) even when it
+         happens to restore locally because packages were already cached. -->
+    <PackageReference Include="MailKit" Version="4.17.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- FIX: removed packages that were unused dead weight or actively risky:
+       - Microsoft.AspNetCore.SignalR 1.2.10: this is the old standalone
+         SignalR package from the ASP.NET Core 2.x era. Server-side SignalR
+         for net8.0 ships inside the Microsoft.AspNetCore.App shared
+         framework already (that's what builder.Services.AddSignalR() uses) -
+         this reference added nothing but an ancient, incompatible package.
+       - Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore: never referenced
+         in code (no UseDatabaseErrorPage/migrations endpoint usage).
+       - Microsoft.EntityFrameworkCore.InMemory: never referenced (AddDbContext
+         only ever calls UseSqlServer).
+       - Microsoft.NET.Test.Sdk / Moq / xunit / xunit.runner.visualstudio:
+         automated tests now live in the Ecom_Demo.Tests project (excluded
+         from this web project's compile items above). Keeping the VSTest
+         toolchain out of this project avoids bloating restore time and the
+         publish output. -->
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+</Project>

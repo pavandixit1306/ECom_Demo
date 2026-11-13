@@ -1,0 +1,72 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Ecom_Demo.Models.ViewModels
+{
+    /// <summary>
+    /// QUESTION 10: ViewModel for user profile page
+    /// Displays user information and order statistics
+    /// </summary>
+    public class ProfileViewModel
+    {
+        [Display(Name = "Email Address")]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Display(Name = "Phone Number")]
+        [Phone]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [Display(Name = "Member Since")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:MMMM dd, yyyy}")]
+        public DateTime DateRegistered { get; set; }
+
+        [Display(Name = "Last Login")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:MMMM dd, yyyy}")]
+        public DateTime? LastLoginDate { get; set; }
+
+        [Display(Name = "Total Orders")]
+        public int TotalOrders { get; set; }
+
+        [Display(Name = "Total Spent")]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "R{0:N2}")]
+        public decimal TotalSpent { get; set; }
+
+        [Display(Name = "Average Order Value")]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "R{0:N2}")]
+        public decimal AverageOrderValue { get; set; }
+
+        [Display(Name = "Account Status")]
+        public bool IsActive { get; set; } = true;
+
+        [Display(Name = "Account Status Text")]
+        public string AccountStatus => IsActive ? "Active" : "Inactive";
+
+        [Display(Name = "Profile Completion")]
+        public int ProfileCompletionPercentage => CalculateProfileCompletion();
+
+        /// <summary>
+        /// Calculates how complete the user profile is (0-100%).
+        /// FIX: the old version counted the email twice (25 + 25) so no
+        /// profile could ever reach 100%; weighted so a fully-registered
+        /// account scores 100.
+        /// </summary>
+        private int CalculateProfileCompletion()
+        {
+            int completion = 0;
+
+            if (!string.IsNullOrEmpty(FullName)) completion += 40;
+            if (!string.IsNullOrEmpty(PhoneNumber)) completion += 30;
+            if (Email?.Contains("@") == true) completion += 30;
+
+            return Math.Min(100, completion);
+        }
+    }
+}
