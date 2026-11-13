@@ -1,4 +1,4 @@
-# Ecom_Demo (SmartGear Online)
+# Ecom_Demo
 
 A custom sports-equipment ordering platform built with **ASP.NET Core 8 MVC**. Customers can browse products, customise gear (colours, logo upload), add items to a cart, apply discount codes and place orders. Admins manage products, inventory and orders, and view a reporting dashboard. A SignalR live chat connects customers with the team.
 
